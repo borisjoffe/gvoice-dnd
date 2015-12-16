@@ -63,36 +63,36 @@ var _rnr_se;
 var DBG = false;
 var ERR_VAL = -1;
 
-window.addEventListener('load', 
+window.addEventListener('load',
 function() {
 
 	main();
-	
+
 	function main() {
 		if (DBG) addDebugPane();
-		
+
 		// Initialization
 		//dbgInfol(document.getElementsByName('_rnr_se')[0].value);
 		_rnr_se = name0('_rnr_se').value;
 		dbgInfol('_rnr_se: ' + _rnr_se);
-		
+
 		makeDNDdiv(isDNDenabled());
-		
+
 		document.body.appendChild(dndDiv);
 		if (DBG && debugDiv != null) document.body.appendChild(debugDiv);
 	}
-	
+
 	// Return true if DND is enabled; otherwise return false
 	// TODO - fix console error below as a result of elIDstyle
 	// Error: uncaught exception: [Exception... "Operation is not supported"  code: "9" nsresult: "0x80530009 (NS_ERROR_DOM_NOT_SUPPORTED_ERR)"  location: "resource://greasemonkey/runScript.js Line: 118"]
 	function isDNDenabled() {
 		const FIND_STATIC_DND = 'gc-dnd-display';
 		var s = elIDstyle(FIND_STATIC_DND)
-		
+
 		if (s == null || s == ERR_VAL) {
 		  dbgErrl('isDNDenabled/elIDstyle - s is: ' + s);
 		  return ERR_VAL;
-		} 
+		}
 		s = s.display;
 		if (s == ERR_VAL) {
 		  dbgErrl('isDNDenabled/elIDstyle returned err');
@@ -101,12 +101,12 @@ function() {
 		//dbgInfol('display: ' + s);
 		return s.indexOf('none') != -1;
 	}
-        
-    
+
+
     // Create DND Div
     function makeDNDdiv(isEnabled) {
         if (DBG && isEnabled) dbgInfol("dnd enabled but making div anyway");
-    
+
         dndDiv = document.createElement('div');
         dndDiv.id = "dndDiv";
         dndDiv.style.position = 'fixed';
@@ -118,14 +118,14 @@ function() {
     	dndDiv.style.opacity = OPACITY_PERCENT;
     	dndDiv.style.zIndex="100";	// put it in front of other elements
 	    dndDiv.style.minWidth = "200px";
-	
+
     	dndEnable = document.createElement('button');
         dndEnable.style.padding = '1px';
     	dndEnable.style.border = '1px solid blue';
     	dndEnable.style.margin = '5px';
     	dndEnable.style.backgroundColor = BUTTON_BG_COLOR;
     	dndEnable.textContent = ENABLE_DND;
-    	
+
     	// Expiration Time Field - in unixtime
     	dndExp = document.createElement('input');
     	dndExp.id = "dndExp";
@@ -134,16 +134,16 @@ function() {
     	dndExp.style.display = "none";
     	//dndExp.style.visible = "none";
     	if (DBG) dndExp.style.display = "inline";
-    	
+
     	// How long to set DND for
     	dndExpDate = document.createElement('input');
     	dndExpDate.id = "dndExpDate";
     	dndExpDate.type = "text";
     	dndExpDate.size = 4;
-    	
+
     	var expValue = new Date( dndExp.value );
     	dndExpDate.value = DEFAULT_DND_MINUTES;
-    	
+
     	// Units of time to set DND for
     	dndExpUnit = document.createElement('select');
     	dndExpUnit.id = "dndExpUnit";
@@ -155,7 +155,7 @@ function() {
     	dndExpUnit.add(hrOpt);
     	dndExpUnit.selectedIndex = 0;
     	//dndExpUnit.size = 2;
-    	
+
     	dndFutureDate = document.createElement('span');
     	dndFutureDate.id = "dndFutureDate";
     	dndFutureDate.innerHTML = "";
@@ -163,7 +163,7 @@ function() {
     	dndFutureDate.style.fontSize = 8;
     	//dndFutureDate.style.margin = "2px";
 		//dndFutureDate.style.padding = "2px";
-    	
+
     	dndDiv.appendChild(dndExpDate);
     	dndDiv.appendChild(dndExpUnit);
     	dndDiv.appendChild(dndEnable);
@@ -171,20 +171,20 @@ function() {
     	dndDiv.appendChild(dndExp);
     	dndDiv.appendChild( document.createElement('br') );
     	dndDiv.appendChild(dndFutureDate);
-    	
-		
+
+
 	   // Create event listener toggle
     	dndEnable.addEventListener('click', enableDND, true);
     	dndExpDate.addEventListener('change', expChange, true);
     	dndExpDate.addEventListener('click', expChange, true);
     	dndExpUnit.addEventListener('change', expChange, true);
-    	
+
     	// When Do Not Distrub expiration date changes
     	// Update seconds
     	function expChange() {
     	   var addMin = addHr = 0;
     	   var futureDate = new Date();
-    	
+
     	   if ( dndExpUnit.selectedIndex == 0 ) {  // minutes selected
     	       addMin = dndExpDate.value;
     	       addMin = addMin * 60 * 1000;    // convert to UNIX ms
@@ -197,24 +197,24 @@ function() {
     	       dbgErrl('expChange evt: could not get selectedIndex');
     	       return ERR_VAL;
     	   }
-    	   
+
     	   dndExp.value = futureDate.getTime();    // update unix time
     	   dbgInfol('futureDate: ' + futureDate);
     	   dndFutureDate.innerHTML = futureDate;
-    	
+
     	}
-	
+
     	// send AJAX POST request to enable DND for unspecified amt of time
     	function enableDND() {
     		dbgInfol('enabling');
     		oldReq = "doNotDisturb=1&_rnr_se=";
-    		
+
     		actualReq1 = 'sid=3&mid=5&req=%5Bnull%2C%5Bnull%2Cnull%2Cnull%2Cnull%2Cnull%2Cnull%2Cnull%2Cnull%2Cfalse%2C';
     		actualReq2 = '%5D%5D&_rnr_se=';
-    		
+
     		expChange();
     		myFullReq = actualReq1 + dndExp.value + actualReq2 + encodeURIComponent(_rnr_se);
-    		
+
     		GM_xmlhttpRequest({
     		  method: "POST",
     		  url: ENABLE_DND_URL,
@@ -234,43 +234,43 @@ function() {
     		});
     	}
     }
-	
+
 	// Helper Functions
-	function el(elStr) { 
+	function el(elStr) {
 	    x = document.getElementById(elStr);    // get el by ID
 	    if (x == null) {
 	       dbgErrl("el: no el by id: " + elStr);
 	       return ERR_VAL;
-	    } else 
+	    } else
 	       return x;
-	}	
-	function elStyle(el) { 
+	}
+	function elStyle(el) {
 	   x = window.getComputedStyle(el, null);	// get computed style of el
 	   if (x == null) {
 	       dbgErrl('elStyle: no el style for: ' + el);
 	       return ERR_VAL;
-	   } else 
+	   } else
 	       return x;
 	}
-	
-	function elIDstyle(elStr) { 
+
+	function elIDstyle(elStr) {
 	   x = el(elStr);
 	   if (x==ERR_VAL) {
 	       dbgErrl('elIDStyle/el - el by ID returned error');
 	       return ERR_VAL;
 	   }
 	   x = window.getComputedStyle( x, null ); 	// get computed style from el ID str
-	   
+
 	   //dbgInfol("computed style:\n"+x.content);
-	   
+
 	   if (x == null) {
 	       dbgErrl('elIDStyle: could not get el style from elbyId: ' + elStr);
 	       return ERR_VAL;
-	   } else 
+	   } else
 	       return x;
 	}
-	
-	function name0(elStr) { 
+
+	function name0(elStr) {
 	   x = document.getElementsByName(elStr); // get first element of a certain name
 	   if (x == null) {
 	       dbgErrl("name0: no el by name: " + elStr);
@@ -281,10 +281,10 @@ function() {
 	   } else if (x[0].value==null) {
 	       dbgWarnl('name0: el[0].value is null');
 	       return x[0];
-	   } else 
+	   } else
 	       return x[0];
-	}	
-	
+	}
+
 	// ========== DEBUGGING SECTION =========
 	// Adds a fixed div at the top right with debug info
 	function addDebugPane() {
@@ -300,14 +300,14 @@ function() {
 		debugDiv.style.backgroundColor = "white";
 		//debugDiv.style.minWidth = "20%";
 		debugDiv.style.zIndex="100";	// put it in front of other elements
-		
+
 		debugDiv.innerHTML = "<b><u>Debug Info</u></b><br>";
 	}
-	
+
 	// Add info to debug div
-	function dbgAdd(htmlText) {	
+	function dbgAdd(htmlText) {
 		if (DBG && debugDiv != null)
-			debugDiv.innerHTML += htmlText; 
+			debugDiv.innerHTML += htmlText;
 		else if (DBG) {
 			var tmpDiv = document.createElement('div');
 			tmpDiv.innerHTML = htmlText;
@@ -323,5 +323,5 @@ function() {
 	function dbgWarnl(htmlText) { dbgAddl('<i style="color:' + WARN_COLOR + ';">Warning:</i> ' + htmlText); }
 	function dbgInfo(htmlText) { dbgAdd('<i style="color:' + INFO_COLOR + ';">Info:</i> ' + htmlText); }
 	function dbgInfol(htmlText) { dbgAddl('<i style="color:' + INFO_COLOR + ';">Info:</i> ' + htmlText); }
-	
+
 }, true);
