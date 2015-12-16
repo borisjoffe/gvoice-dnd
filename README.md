@@ -5,8 +5,8 @@ Google Voice Do-Not-Disturb Button
 
 Features
 --------
-- Shows a "do not disturb" button on all Google Voice pages with input for the duration of the do not disturb period.
-- The default duration is 20 minutes.
+- Shows a "do not disturb" button on all Google Voice pages
+- Has input for the duration of the do not disturb period (default is 20)
 
 ![GVoice DND Screenshot - changing duration](gvoice-dnd-0.5-onclick-ne-ds.png)
 
