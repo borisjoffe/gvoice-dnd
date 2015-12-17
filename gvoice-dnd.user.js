@@ -1,17 +1,15 @@
 // ==UserScript==
-// @name       GVoice DND
-// @namespace  GVoice DND
-// @version    0.5
-// @description  show do not disturb on main page
-// @match      https://*.google.com/voice*
-// @updateURL  http://userscripts.org/scripts/source/136362.meta.js
-// @downloadURL http://userscripts.org/scripts/source/136362.user.js
-// @copyright  2012, 2013 Boris Joffe
-// @grant       GM_xmlhttpRequest
+// @name         GVoice DND
+// @namespace    http://boris.joff3.com
+// @version      1.0
+// @description  Show do not disturb button on main Google Voice page
+// @match        https://*.google.com/voice*
+// @copyright    2012, 2013, 2015 Boris Joffe
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 /*
-    Copyright (C) 2012, 2013 Boris Joffe
+    Copyright (C) 2012, 2013, 2015 Boris Joffe
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
